@@ -1,5 +1,8 @@
 public class Main {
+
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        ArrayHandler arrayHandler = new ArrayHandler(100);
+        arrayHandler.initArray();
     }
+
 }
