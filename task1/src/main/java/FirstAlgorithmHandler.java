@@ -1,39 +1,54 @@
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
+import java.util.Map;
 
 @Slf4j
 public class FirstAlgorithmHandler {
     private final int[] array;
     private final int arraySize;
+    private final Counter counter;
     private int leftBorder;
     private int rightBorder;
+    private final int[] newArray;
 
-    public FirstAlgorithmHandler(int[] array) {
+
+    public FirstAlgorithmHandler(int[] array, Counter counter) {
         this.array = array;
         this.arraySize = array.length;
+        this.counter = counter;
         this.leftBorder = 0;
         this.rightBorder = arraySize;
+        this.newArray = new int[arraySize];
     }
 
-    public int[] handleArrayByFirstAlgorithm() {
-        int[] tempArray = new int[arraySize];
+    public void handleArrayByFirstAlgorithm() {
 
         for (int i = 0; i < arraySize; i++) {
+            counter.count(array[i]);
             if (array[i] == 0) {
                 continue;
             }
 
             if (array[i] % 2 == 0) {
-                embedEvenNumberIntoArray(tempArray, array[i]);
+                embedEvenNumberIntoArray(newArray, array[i]);
             }
 
             if (array[i] % 2 != 0) {
-                embedOddNumberIntoArray(tempArray, array[i]);
+                embedOddNumberIntoArray(newArray, array[i]);
             }
         }
-        log.info(Arrays.toString(tempArray));
-        return tempArray;
+        log.info(Arrays.toString(newArray));
+    }
+
+    private Map<Integer, Integer> getCountResults() {
+        return counter.countFrequentlyEncountered();
+    }
+
+    public void printResults() {
+        System.out.println("New array: " + Arrays.toString(array));
+        System.out.println("Most popular values: " + getCountResults().keySet());
+        System.out.println("Quantity: " + getCountResults().values().stream().findFirst());
     }
 
     private void embedEvenNumberIntoArray(int[] array, int value) {
@@ -50,8 +65,8 @@ public class FirstAlgorithmHandler {
             array[i - 1] = array[i];
         }
         array[index] = value;
-        log.info("index: {}, value: {}, rightBorder: {}", index, value, rightBorder);
-        log.info("array: {}", Arrays.toString(array));
+//        log.info("index: {}, value: {}, rightBorder: {}", index, value, rightBorder);
+//        log.info("array: {}", Arrays.toString(array));
         rightBorder--;
     }
 
@@ -69,8 +84,8 @@ public class FirstAlgorithmHandler {
             array[i] = array[i - 1];
         }
         array[index] = value;
-        log.info("index: {}, value: {}, rightBorder: {}", index, value, leftBorder);
-        log.info("array: {}", Arrays.toString(array));
+//        log.info("index: {}, value: {}, rightBorder: {}", index, value, leftBorder);
+//        log.info("array: {}", Arrays.toString(array));
         leftBorder++;
     }
 

@@ -17,7 +17,7 @@ public class ArrayHandler {
         int[] array = new int[arraySize];
 
         for (int i = 0; i < arraySize; i++) {
-            array[i] = random.nextInt();
+            array[i] = random.nextInt(10);
             log.info(String.valueOf(array[i]));
         }
         return array;
