@@ -7,8 +7,8 @@ public class Main {
 //        firstAlgHandler.handleArrayByFirstAlgorithm();
 //        firstAlgHandler.printResults();
 
-        GameHandler gameHandler = new GameHandler(50);
-        gameHandler.handle();
+        GameHandler gameHandler = new GameHandler();
+        gameHandler.handle(50);
     }
 
 }
