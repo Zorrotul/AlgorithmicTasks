@@ -1,7 +1,6 @@
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
-import java.util.Map;
 
 @Slf4j
 public class FirstAlgorithmHandler {
@@ -13,8 +12,8 @@ public class FirstAlgorithmHandler {
     private final int[] newArray;
 
 
-    public FirstAlgorithmHandler(int[] array, Counter counter) {
-        this.array = array;
+    public FirstAlgorithmHandler(Counter counter) {
+        this.array = RandomArrayHandler.generateRealNumbersArray(100, 10);
         this.arraySize = array.length;
         this.counter = counter;
         this.leftBorder = 0;
@@ -23,6 +22,7 @@ public class FirstAlgorithmHandler {
     }
 
     public void handleArrayByFirstAlgorithm() {
+        log.info("Random array: {}", Arrays.toString(array));
 
         for (int i = 0; i < arraySize; i++) {
             counter.count(array[i]);
@@ -38,17 +38,11 @@ public class FirstAlgorithmHandler {
                 embedOddNumberIntoArray(newArray, array[i]);
             }
         }
-        log.info(Arrays.toString(newArray));
-    }
-
-    private Map<Integer, Integer> getCountResults() {
-        return counter.countFrequentlyEncountered();
+        log.info("Sorted array: {}", Arrays.toString(newArray));
     }
 
     public void printResults() {
-        System.out.println("New array: " + Arrays.toString(array));
-        System.out.println("Most popular values: " + getCountResults().keySet());
-        System.out.println("Quantity: " + getCountResults().values().stream().findFirst());
+        counter.printFrequentlyEncountered();
     }
 
     private void embedEvenNumberIntoArray(int[] array, int value) {
@@ -65,8 +59,6 @@ public class FirstAlgorithmHandler {
             array[i - 1] = array[i];
         }
         array[index] = value;
-//        log.info("index: {}, value: {}, rightBorder: {}", index, value, rightBorder);
-//        log.info("array: {}", Arrays.toString(array));
         rightBorder--;
     }
 
@@ -84,8 +76,6 @@ public class FirstAlgorithmHandler {
             array[i] = array[i - 1];
         }
         array[index] = value;
-//        log.info("index: {}, value: {}, rightBorder: {}", index, value, leftBorder);
-//        log.info("array: {}", Arrays.toString(array));
         leftBorder++;
     }
 

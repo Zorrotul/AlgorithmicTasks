@@ -1,42 +1,44 @@
+import config.Configuration;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class GameHandler {
 
     private int[] array;
     private List<Player> players;
-    private final int bound = 2;
-    private final int playersSequenceSize = 3;
+    private final int bound = 6;
+    private final int playersSequenceSize;
     private final SequenceCalculator calculator;
+    private final int quantity;
+    private final Configuration configuration;
 
 
-    public GameHandler() {
-        this.calculator = new SequenceCalculator(playersSequenceSize);
+    public GameHandler(Configuration configuration) {
+        this.playersSequenceSize = configuration.getPlayersSequenceSize();
+        this.quantity = configuration.getSequenceQuantity();
+        this.calculator = new SequenceCalculator(configuration);
+        this.configuration = configuration;
     }
 
-    public void handle(int quantity) {
+    public void handle() {
 
-        array = ArrayHandler.fillInArrayAndGet(quantity, bound);
+        array = RandomArrayHandler.generateArray(quantity, bound);
         players = new ArrayList<>();
-        players.add(new Player("Alex", playersSequenceSize, bound));
-        players.add(new Player("Bob", playersSequenceSize, bound));
-        log.info("array: " + Arrays.toString(array));
-        players.stream()
-                .peek(p -> {
-                    log.info("{} subsequence: {}", p.getName(), Arrays.toString(p.getSequence()));
-                });
 
-        calculator.calculateTheChanceOfWinning(players);
-        calculator.calculate(array, players);
+        if (configuration.getFirstPlayerSequence() != null) {
+            players.add(new Player("Alex", configuration.getFirstPlayerSequence()));
+            players.add(new Player("Bob", configuration.getSecondPlayerSequence()));
+        } else {
+            players.add(new Player("Alex", playersSequenceSize, bound));
+            players.add(new Player("Bob", playersSequenceSize, bound));
+        }
+        calculator.calculateTheChanceOfWinningByPlayers(players);
+        calculator.calculateAndPrintWinner(players);
 
+        players.forEach(p -> log.debug("{} sequence: {}", p.getName(), Arrays.toString(p.getSequence())));
     }
-
-
-
-
 }

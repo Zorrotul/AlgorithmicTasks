@@ -2,31 +2,54 @@ import java.util.Arrays;
 
 class Player {
     private final int[] sequence;
-    private int numberOfOccurrences;
+    private int numberOfWinMatches;
     private int lastSequenceIndex;
+    private int numberOfWins;
     private final String name;
     private final int playersSequenceSize;
 
     public Player(String name, int playersSequenceSize, int bound) {
-        this.sequence = ArrayHandler.fillInArrayAndGet(playersSequenceSize, bound);
-        this.numberOfOccurrences = 0;
-        this.name = name;
+        this.sequence = RandomArrayHandler.generateArray(playersSequenceSize, bound);
+        this.numberOfWinMatches = 0;
         this.lastSequenceIndex = 0;
+        this.numberOfWins = 0;
+        this.name = name;
         this.playersSequenceSize = playersSequenceSize;
+    }
+
+    public Player(String name, int[] sequence) {
+        this.sequence = sequence;
+        this.numberOfWinMatches = 0;
+        this.lastSequenceIndex = 0;
+        this.numberOfWins = 0;
+        this.name = name;
+        this.playersSequenceSize = sequence.length;
 
     }
 
     public void incNumberOfOccurrences() {
-        numberOfOccurrences++;
+        numberOfWinMatches++;
+    }
+
+    public void incNumberOfWins() {
+        this.numberOfWins++;
+    }
+
+    public void resetWins() {
+        numberOfWins = 0;
+    }
+
+    public int getNumberOfWins() {
+        return numberOfWins;
     }
 
     public void resetPlayerCache() {
-        numberOfOccurrences = 0;
+        numberOfWinMatches = 0;
         lastSequenceIndex = 0;
     }
 
-    public int getNumberOfOccurrences() {
-        return numberOfOccurrences;
+    public int getNumberOfWinMatches() {
+        return numberOfWinMatches;
     }
 
     public int[] getSequence() {
@@ -57,7 +80,7 @@ class Player {
                 .append(", Sequence: ")
                 .append(Arrays.toString(sequence))
                 .append(", NumberOfOccurrences: ")
-                .append(numberOfOccurrences)
+                .append(numberOfWinMatches)
                 .toString();
     }
 }

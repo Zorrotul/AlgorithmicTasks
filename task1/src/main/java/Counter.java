@@ -1,7 +1,9 @@
+import error.CounterException;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 public class Counter {
@@ -17,10 +19,10 @@ public class Counter {
         } else {
             valuesMap.put(i, 1);
         }
-        log.info("valuesMap: " + String.valueOf(valuesMap));
+        log.debug("valuesMap: " + String.valueOf(valuesMap));
     }
 
-    public Map<Integer, Integer> countFrequentlyEncountered() {
+    public void printFrequentlyEncountered() {
         Map<Integer, Integer> tempMap = new HashMap<>();
         int max = valuesMap.values().stream().max(Comparator.naturalOrder())
                 .orElseThrow(() -> {
@@ -32,33 +34,14 @@ public class Counter {
                 tempMap.put(entry.getKey(), max);
             }
         }
-        return tempMap;
+        printResults(tempMap);
     }
 
-    private class Results {
-        private List<Integer> popularValues;
-        private int count;
-
-        public Results(int count) {
-            popularValues = new ArrayList<>();
-            this.count = count;
-        }
-
-        public void addValue(int value) {
-            popularValues.add(value);
-        }
-
-        public void incCount() {
-            count++;
-        }
-
-        public void reset() {
-            popularValues = new ArrayList<>();
-            count = 1;
-        }
-
-        public int getCount() {
-            return count;
-        }
+    private void printResults(Map<Integer, Integer> results) {
+        log.info("Most popular values: {}", results.keySet());
+        log.info("Quantity of popular values: {}", results.values().stream().findFirst().orElseThrow(() -> {
+            throw new CounterException("PrintResults<- cant find values");
+        }));
     }
+
 }
