@@ -1,63 +1,34 @@
-import config.Configuration;
+import config.GameConfiguration;
 import error.SqCalculatorException;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 @Slf4j
 public class SequenceCalculator {
 
-    private final int playersSequenceSize;
     private final int degreeOfAccuracy;
-    DecimalFormat format = new DecimalFormat("#0.00");
+    private final int sequenceQuantity;
+    private DecimalFormat format = new DecimalFormat("#0.00");
+    private RandomArrayHandler rah;
 
 
-    public SequenceCalculator(Configuration configuration) {
-        this.playersSequenceSize = configuration.getPlayersSequenceSize();
-        this.degreeOfAccuracy = configuration.getDegreeOfAccuracy();
+    public SequenceCalculator(GameConfiguration gameConfiguration) {
+        this.degreeOfAccuracy = gameConfiguration.getDegreeOfAccuracy();
+        this.sequenceQuantity = gameConfiguration.getSequenceQuantity();
     }
 
+
+    /**
+     * Данный метод играет 1 игру с игроками и выводит победителя на экран
+     */
     public void calculateAndPrintWinner(List<Player> players) {
         printResults(calculateWinner(players));
-    }
-
-    public List<Player> calculateWinner(List<Player> players) {
-        int[] array = RandomArrayHandler.generateArray(50, 6);
-        for (int i = 0; i < array.length - playersSequenceSize + 1; i++) {
-            int[] subsequence = Arrays.copyOfRange(array, i, i + playersSequenceSize);
-            log.debug("subsequence {}: {}", i, Arrays.toString(subsequence));
-
-            for (Player player : players) {
-                if (Arrays.equals(subsequence, player.getSequence()) && (i >= player.getLastSequenceIndex())) {
-                    player.incNumberOfOccurrences();
-                    player.setLastSequenceIndex(i + playersSequenceSize);
-                    log.debug("{}, last index: {}", player.getName(), player.getLastSequenceIndex());
-                }
-            }
-        }
-
-        players.forEach(p -> log.debug("Player: {}", p.toString()));
-
-        int max = players.stream()
-                .map(Player::getNumberOfWinMatches)
-                .max(Integer::compareTo)
-                .orElseThrow(() -> new SqCalculatorException("no max value"));
-
-        return players.stream()
-                .filter(player -> player.getNumberOfWinMatches() == max)
-                .collect(Collectors.toList());
-    }
-
-    public void calculateTheChanceOfWinningBySequences(int[] s1, int[] s2) {
-        List<Player> players = new ArrayList<>();
-        players.add(new Player("Alex", s1));
-        players.add(new Player("Bob", s2));
-        calculateTheChanceOfWinning(players);
-        printChancesResults(players);
     }
 
     public void calculateTheChanceOfWinningByPlayers(List<Player> players) {
@@ -82,6 +53,35 @@ public class SequenceCalculator {
 
     }
 
+    private List<Player> calculateWinner(List<Player> players) {
+        rah = new RandomArrayHandlerImpl(sequenceQuantity, 6);
+        int[] array = rah.generateArray();
+        log.debug(Arrays.toString(array));
+        for (int i = 0; i < array.length - players.get(0).getPlayersSequenceSize() + 1; i++) {
+            int[] subsequence = Arrays.copyOfRange(array, i, i + players.get(0).getPlayersSequenceSize());
+            log.debug("subsequence {}: {}", i, Arrays.toString(subsequence));
+
+            for (Player player : players) {
+                if (Arrays.equals(subsequence, player.getSequence()) && (i >= player.getLastSequenceIndex())) {
+                    player.incNumberOfOccurrences();
+                    player.setLastSequenceIndex(i + players.get(0).getPlayersSequenceSize());
+                    log.debug("{}, last index: {}", player.getName(), player.getLastSequenceIndex());
+                }
+            }
+        }
+
+        players.forEach(p -> log.debug("Player: {}", p.toString()));
+
+        int max = players.stream()
+                .map(Player::getNumberOfWinMatches)
+                .max(Integer::compareTo)
+                .orElseThrow(() -> new SqCalculatorException("no max value"));
+
+        return players.stream()
+                .filter(player -> player.getNumberOfWinMatches() == max)
+                .collect(Collectors.toList());
+    }
+
     private void printChancesResults(List<Player> players) {
         if (players.size() != 2) {
             throw new SqCalculatorException("printChancesResults<- Wrong quantity of players");
@@ -92,16 +92,16 @@ public class SequenceCalculator {
         double chancesOfDraw = (double) draws / degreeOfAccuracy * 100;
         double chancesOfWinningFirst = (double) winFirst / degreeOfAccuracy * 100;
         double chancesOfWinningSecond = (double) winSecond / degreeOfAccuracy * 100;
-        log.info("{} chance to win: {}%", players.get(0).getName(), format.format(chancesOfWinningFirst));
-        log.info("{} chance to win: {}%", players.get(1).getName(), format.format(chancesOfWinningSecond));
-        log.info("chance to draw: {}%", format.format(chancesOfDraw));
+        System.out.printf("%s chance to win: %s%%\n", players.get(0).getName(), format.format(chancesOfWinningFirst));
+        System.out.printf("%s chance to win: %s%%\n", players.get(1).getName(), format.format(chancesOfWinningSecond));
+        System.out.printf("chance to draw: %s%%\n", format.format(chancesOfDraw));
     }
 
     private void printResults(List<Player> players) {
         if (players.size() > 1) {
-            log.info("Draw");
+            System.out.print("Draw\n");
         } else {
-            log.info("Winner: {}", players.get(0).getName());
+            System.out.printf("Winner: %s\n", players.get(0).getName());
         }
 
     }

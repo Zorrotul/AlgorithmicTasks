@@ -10,19 +10,17 @@ import java.util.Properties;
 
 @Slf4j
 @Data
-public class Configuration {
-    private final int playersSequenceSize;
+public class GameConfiguration {
     private final int degreeOfAccuracy;
     private final int sequenceQuantity;
     private int[] firstPlayerSequence;
     private int[] secondPlayerSequence;
 
 
-    public Configuration() {
+    public GameConfiguration() {
         Properties properties = new Properties();
-        try (FileInputStream input = new FileInputStream("task1/src/main/resources/config.properties")) {
+        try (FileInputStream input = new FileInputStream("task1/src/main/resources/gameConfig.properties")) {
             properties.load(input);
-            this.playersSequenceSize = Integer.parseInt(properties.getProperty("playersSequenceSize"));
             this.degreeOfAccuracy = Integer.parseInt(properties.getProperty("degreeOfAccuracy"));
             this.sequenceQuantity = Integer.parseInt(properties.getProperty("sequenceQuantity"));
         } catch (IOException | NumberFormatException | NullPointerException e) {
@@ -30,13 +28,10 @@ public class Configuration {
             throw new ConfigurationException("invalid config");
         }
 
-        try (FileInputStream input = new FileInputStream("task1/src/main/resources/config.properties")) {
+        try (FileInputStream input = new FileInputStream("task1/src/main/resources/gameConfig.properties")) {
             properties.load(input);
             String[] firstArray = properties.getProperty("firstPlayerSequence").split(",");
             String[] secondArray = properties.getProperty("secondPlayerSequence").split(",");
-            if (firstArray.length != playersSequenceSize || secondArray.length != playersSequenceSize) {
-                throw new ConfigurationException("wrong players sequence size");
-            }
 
             this.firstPlayerSequence = new int[firstArray.length];
             for (int i = 0; i < firstArray.length; i++) {

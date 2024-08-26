@@ -9,7 +9,8 @@ class Player {
     private final int playersSequenceSize;
 
     public Player(String name, int playersSequenceSize, int bound) {
-        this.sequence = RandomArrayHandler.generateArray(playersSequenceSize, bound);
+        RandomArrayHandler rah = new RandomArrayHandlerImpl(playersSequenceSize, bound);
+        this.sequence = rah.generateArray();
         this.numberOfWinMatches = 0;
         this.lastSequenceIndex = 0;
         this.numberOfWins = 0;
@@ -35,8 +36,8 @@ class Player {
         this.numberOfWins++;
     }
 
-    public void resetWins() {
-        numberOfWins = 0;
+    public int getPlayersSequenceSize() {
+        return playersSequenceSize;
     }
 
     public int getNumberOfWins() {
@@ -66,10 +67,6 @@ class Player {
 
     public int getLastSequenceIndex() {
         return lastSequenceIndex;
-    }
-
-    public int getPlayersSequenceSize() {
-        return playersSequenceSize;
     }
 
     @Override

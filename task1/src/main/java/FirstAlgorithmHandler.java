@@ -1,7 +1,10 @@
+import config.FirstAlgConfiguration;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 
+@AllArgsConstructor
 @Slf4j
 public class FirstAlgorithmHandler {
     private final int[] array;
@@ -12,8 +15,9 @@ public class FirstAlgorithmHandler {
     private final int[] newArray;
 
 
-    public FirstAlgorithmHandler(Counter counter) {
-        this.array = RandomArrayHandler.generateRealNumbersArray(100, 10);
+    public FirstAlgorithmHandler(Counter counter, FirstAlgConfiguration configuration) {
+        RandomArrayHandler rah= new RandomArrayHandlerImpl(configuration.getSequenceQuantity(), configuration.getBound());
+        this.array = rah.generateRealNumbersArray();
         this.arraySize = array.length;
         this.counter = counter;
         this.leftBorder = 0;
@@ -22,7 +26,7 @@ public class FirstAlgorithmHandler {
     }
 
     public void handleArrayByFirstAlgorithm() {
-        log.info("Random array: {}", Arrays.toString(array));
+        System.out.printf("Random array: %s\n", Arrays.toString(array));
 
         for (int i = 0; i < arraySize; i++) {
             counter.count(array[i]);
@@ -38,7 +42,7 @@ public class FirstAlgorithmHandler {
                 embedOddNumberIntoArray(newArray, array[i]);
             }
         }
-        log.info("Sorted array: {}", Arrays.toString(newArray));
+        System.out.printf("Sorted array: %s\n", Arrays.toString(newArray));
     }
 
     public void printResults() {

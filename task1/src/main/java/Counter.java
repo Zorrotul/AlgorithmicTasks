@@ -19,7 +19,7 @@ public class Counter {
         } else {
             valuesMap.put(i, 1);
         }
-        log.debug("valuesMap: " + String.valueOf(valuesMap));
+        log.debug("valuesMap: " + valuesMap);
     }
 
     public void printFrequentlyEncountered() {
@@ -38,8 +38,8 @@ public class Counter {
     }
 
     private void printResults(Map<Integer, Integer> results) {
-        log.info("Most popular values: {}", results.keySet());
-        log.info("Quantity of popular values: {}", results.values().stream().findFirst().orElseThrow(() -> {
+        System.out.printf("Most popular values: %s\n", results.keySet());
+        System.out.printf("Quantity of popular values: %d\n", results.values().stream().findFirst().orElseThrow(() -> {
             throw new CounterException("PrintResults<- cant find values");
         }));
     }

@@ -1,4 +1,4 @@
-import config.Configuration;
+import config.GameConfiguration;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -8,36 +8,28 @@ import java.util.List;
 @Slf4j
 public class GameHandler {
 
-    private int[] array;
-    private List<Player> players;
     private final int bound = 6;
-    private final int playersSequenceSize;
     private final SequenceCalculator calculator;
-    private final int quantity;
-    private final Configuration configuration;
+    private final GameConfiguration gameConfiguration;
 
 
-    public GameHandler(Configuration configuration) {
-        this.playersSequenceSize = configuration.getPlayersSequenceSize();
-        this.quantity = configuration.getSequenceQuantity();
-        this.calculator = new SequenceCalculator(configuration);
-        this.configuration = configuration;
+    public GameHandler(GameConfiguration gameConfiguration) {
+        this.calculator = new SequenceCalculator(gameConfiguration);
+        this.gameConfiguration = gameConfiguration;
     }
 
     public void handle() {
 
-        array = RandomArrayHandler.generateArray(quantity, bound);
-        players = new ArrayList<>();
+        List<Player> players = new ArrayList<>();
 
-        if (configuration.getFirstPlayerSequence() != null) {
-            players.add(new Player("Alex", configuration.getFirstPlayerSequence()));
-            players.add(new Player("Bob", configuration.getSecondPlayerSequence()));
+        if (gameConfiguration.getFirstPlayerSequence() != null) {
+            players.add(new Player("Alex", gameConfiguration.getFirstPlayerSequence()));
+            players.add(new Player("Bob", gameConfiguration.getSecondPlayerSequence()));
         } else {
-            players.add(new Player("Alex", playersSequenceSize, bound));
-            players.add(new Player("Bob", playersSequenceSize, bound));
+            players.add(new Player("Alex", 3, bound));
+            players.add(new Player("Bob", 3, bound));
         }
         calculator.calculateTheChanceOfWinningByPlayers(players);
-        calculator.calculateAndPrintWinner(players);
 
         players.forEach(p -> log.debug("{} sequence: {}", p.getName(), Arrays.toString(p.getSequence())));
     }
